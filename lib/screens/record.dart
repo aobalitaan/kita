@@ -20,7 +20,7 @@ class _RecordState extends State<Record> {
         child: Column(
           children: [
             Container(
-              height: 150,
+              height: 100,
               color: Styles.color_accent, // You can customize the container
             ),
             // Add more widgets as needed here

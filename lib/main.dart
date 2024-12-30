@@ -76,20 +76,7 @@ class _RouteScreenState extends State<RouteScreen> {
       onTap: () {
         Navigator.push(
           context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => const AddRecord(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              // Slide transition from bottom to top
-              const begin = Offset(0.0, 1.0); // Start from the bottom of the screen
-              const end = Offset.zero; // End at the original position
-              const curve = Curves.easeInOut;
-
-              var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-              var offsetAnimation = animation.drive(tween);
-
-              return SlideTransition(position: offsetAnimation, child: child);
-            },
-          ),
+          MaterialPageRoute(builder: (context) => const AddRecord()),
         );
         print('Action button pressed');
       },
