@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../styles.dart';
+import 'package:provider/provider.dart'; // Ensure this import is added
+import '../styles.dart'; // Keep this import for styles
 
 class AddRecord extends StatefulWidget {
   const AddRecord({super.key});
@@ -14,14 +15,14 @@ class _AddRecordState extends State<AddRecord> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Record'),
-        backgroundColor: Styles.color_accent, // Customize your app bar color if needed
+        backgroundColor: context.watch<ThemeProvider>().colorAccent, // Dynamic app bar color
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
               height: 150,
-              color: Styles.color_accent, // You can customize the container
+              color: context.watch<ThemeProvider>().colorAccent, // Dynamic container color
             ),
             // Add more widgets as needed here
           ],

@@ -1,18 +1,41 @@
 import 'package:flutter/material.dart';
 
-class Styles {
-  static Color color_backdrop = const Color(0xFFDBDADA);
-  static Color color_mainbody = const Color(0xFFFFFFFF);
-  static Color color_text = const Color(0xFF1E1E1E);
-  // static Color color_accent = const Color(0xFF39B54C);
-  static Color color_accent = const Color.fromARGB(255, 29, 175, 208);
+class ThemeProvider with ChangeNotifier {
+  bool _isDark = false;
 
-  static String font = 'AlbertSans';
+  bool get isDark => _isDark;
 
-  static BorderRadius rounded = BorderRadius.circular(20);
-  static BoxShadow boxShadow =  BoxShadow(
-                                  color: Colors.black.withOpacity(0.25),
-                                  blurRadius: 5,
-                                  offset: Offset(0, 4),
-                                );
+  set isDark(bool value) {
+    _isDark = value;
+    notifyListeners(); // Notify listeners when the theme changes
+  }
+
+  List<Color> get colorScheme => _isDark ? darkMode : lightMode;
+
+  List<Color> lightMode = [
+    const Color(0xFFF5F5F5),
+    const Color(0xFFFFFFFF),
+    const Color(0xFF333333),
+  ];
+
+  List<Color> darkMode = [
+    const Color(0xFF121212),
+    const Color(0xFF141414),
+    const Color(0xFFFFFFFF),
+  ];
+
+  Color get colorBackdrop => colorScheme[0];
+  Color get colorMainBody => colorScheme[1];
+  Color get colorText => colorScheme[2];
+  Color get colorAccent => const Color(0xFF39B54C);
+
+  String get font => 'AlbertSans';
+
+  BorderRadius get rounded => BorderRadius.circular(20);
+
+  BoxShadow get boxShadow => BoxShadow(
+        color: colorText.withOpacity(0.1),
+        blurRadius: 5,
+        offset: const Offset(0, 0),
+      );
 }

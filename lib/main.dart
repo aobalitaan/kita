@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kita/screens/addrecord.dart';
-import 'package:kita/screens/record.dart';
 import 'package:kita/styles.dart';
+import 'package:provider/provider.dart';
+import 'package:kita/pages/addrecord.dart';
+import 'package:kita/screens/onboarding/splash.dart';
+import 'package:kita/screens/record.dart';
 import 'package:kita/widgets/navbar.dart';
 
 import 'screens/accounts.dart';
@@ -9,7 +11,12 @@ import 'screens/calendar.dart';
 import 'screens/summary.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -17,14 +24,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Kita',
-      theme: ThemeData(
-        fontFamily: Styles.font,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const RouteScreen(),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          title: 'Kita',
+          theme: ThemeData(
+            fontFamily: themeProvider.font,
+            colorScheme: ColorScheme.fromSeed(seedColor: themeProvider.colorAccent),
+            useMaterial3: true,
+            scaffoldBackgroundColor: themeProvider.colorBackdrop,
+          ),
+          home: const Splash(),
+        );
+      },
     );
   }
 }
@@ -46,7 +58,6 @@ class _RouteScreenState extends State<RouteScreen> {
     setState(() {
       this.route = route;
     });
-    print(this.route);
   }
 
   @override
@@ -57,28 +68,32 @@ class _RouteScreenState extends State<RouteScreen> {
         children: [
           routes[route],
 
-          Positioned.fill(child: Align(
-            alignment: Alignment.bottomCenter, 
-            child:  NavBar(changeRoute: changeRoute)
-          )),
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: NavBar(changeRoute: changeRoute),
+            ),
+          ),
 
-          Positioned.fill(bottom: 30, child: Align(
-            alignment: Alignment.bottomCenter, 
-            child:  actionButton()
-          ))
+          Positioned.fill(
+            bottom: 30,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: actionButton(),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget actionButton(){
+  Widget actionButton() {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const AddRecord()),
         );
-        print('Action button pressed');
       },
       onTapDown: (_) {
         setState(() {
@@ -96,21 +111,21 @@ class _RouteScreenState extends State<RouteScreen> {
         });
       },
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 15),
-        width: _buttonPressed ? 72 : 70,
-        height: _buttonPressed ? 72 : 70,
+        duration: const Duration(milliseconds: 25),
+        width: _buttonPressed ? 71 : 70,
+        height: _buttonPressed ? 71 : 70,
         decoration: BoxDecoration(
-          color: Styles.color_accent,
+          color: context.watch<ThemeProvider>().colorAccent, // Use the provider's color
           shape: BoxShape.rectangle,
           borderRadius: BorderRadius.circular(25),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.25), blurRadius: 8, offset: Offset(0, 4))]
+          boxShadow: [context.watch<ThemeProvider>().boxShadow], // Use the provider's boxShadow
         ),
         child: Icon(
           Icons.add_rounded,
           size: 40,
-          color: Styles.color_mainbody,
+          color: context.watch<ThemeProvider>().colorMainBody, // Use the provider's color
         ),
-      )
+      ),
     );
   }
 }

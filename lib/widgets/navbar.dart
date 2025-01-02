@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:kita/styles.dart';
 
 class NavBar extends StatefulWidget {
@@ -31,7 +32,7 @@ class _NavBarState extends State<NavBar> with TickerProviderStateMixin {
     _slideControllers = List.generate(
       _titles.length,
       (index) => AnimationController(
-        duration: const Duration(milliseconds: 150),
+        duration: const Duration(milliseconds: 250),
         vsync: this,
       ),
     );
@@ -39,8 +40,8 @@ class _NavBarState extends State<NavBar> with TickerProviderStateMixin {
     _slideAnimations = List.generate(
       _titles.length,
       (index) => Tween<Offset>(
-        begin: const Offset(0, 0.1),  
-        end: Offset.zero,            
+        begin: const Offset(0, 0.1),
+        end: Offset.zero,
       ).animate(CurvedAnimation(parent: _slideControllers[index], curve: Curves.easeOut)),
     );
   }
@@ -56,31 +57,35 @@ class _NavBarState extends State<NavBar> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Styles.color_mainbody,
-            borderRadius: Styles.rounded,
-            boxShadow: [
-              Styles.boxShadow
-            ],
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-          margin: const EdgeInsets.all(10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              SizedBox(height: 50, width: 60, child: _buildIconWithTitle(_icons[0], 0)),
-              SizedBox(height: 50, width: 60, child: _buildIconWithTitle(_icons[1], 1)),
-              SizedBox(width: 75),
-              SizedBox(height: 50, width: 60, child: _buildIconWithTitle(_icons[2], 2)),
-              SizedBox(height: 50, width: 60, child: _buildIconWithTitle(_icons[3], 3)),
-            ],
-          ),
-        ),
-      ],
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: themeProvider.colorMainBody, // Updated to use provider's color
+                borderRadius: themeProvider.rounded, // Updated to use provider's border radius
+                boxShadow: [
+                  themeProvider.boxShadow // Updated to use provider's box shadow
+                ],
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+              margin: const EdgeInsets.all(10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(height: 50, width: 60, child: _buildIconWithTitle(_icons[0], 0)),
+                  SizedBox(height: 50, width: 60, child: _buildIconWithTitle(_icons[1], 1)),
+                  SizedBox(width: 75),
+                  SizedBox(height: 50, width: 60, child: _buildIconWithTitle(_icons[2], 2)),
+                  SizedBox(height: 50, width: 60, child: _buildIconWithTitle(_icons[3], 3)),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -106,7 +111,6 @@ class _NavBarState extends State<NavBar> with TickerProviderStateMixin {
             position: _slideAnimations[routeIndex],
             child: Stack(
               alignment: Alignment.center,
-
               children: [
                 iconTile(iconPath, routeIndex),
                 textTile(routeIndex)
@@ -118,14 +122,15 @@ class _NavBarState extends State<NavBar> with TickerProviderStateMixin {
     );
   }
 
-
-  Widget iconTile(iconPath, routeIndex){
+  Widget iconTile(iconPath, routeIndex) {
     return Column(
       children: [
         SizedBox(height: 8),
         Image.asset(
           iconPath,
-          color: _activeRoute == routeIndex ? Styles.color_accent : Styles.color_text,
+          color: _activeRoute == routeIndex
+              ? context.watch<ThemeProvider>().colorAccent // Use accent color from provider
+              : context.watch<ThemeProvider>().colorText, // Use text color from provider
           width: 24,
           height: 24,
         ),
@@ -134,7 +139,7 @@ class _NavBarState extends State<NavBar> with TickerProviderStateMixin {
     );
   }
 
-  Widget textTile(routeIndex){
+  Widget textTile(routeIndex) {
     return Column(
       children: [
         SizedBox(height: 29),
@@ -147,7 +152,7 @@ class _NavBarState extends State<NavBar> with TickerProviderStateMixin {
                   child: Text(
                     _titles[routeIndex],
                     style: TextStyle(
-                      color: Styles.color_accent,
+                      color: context.watch<ThemeProvider>().colorAccent, // Use accent color from provider
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
